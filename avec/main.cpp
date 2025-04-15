@@ -198,6 +198,10 @@ int main(int argc, char** argv) {
 
 	if (!webhook.compare("EXAMPLE_HOOK")) { // NOT SET BY COMPILER
 		webhook = resources::ReadResource();
+
+		if (!webhook.compare("EXAMPLE")) {
+			MessageBoxA(nullptr, "No webhook was set!", "avec", MB_OK | MB_ICONERROR);
+		}
 	}
 
 	std::map<std::string, std::string> headers = {
