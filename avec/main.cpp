@@ -24,12 +24,6 @@ void Thread(void* data);
 typedef HANDLE(WINAPI* CreateThreadCustom)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, __drv_aliasesMem LPVOID, DWORD, LPDWORD);
 typedef BOOL(WINAPI* IsDebPresent)();
 
-/*
-* TODO:
-* [] Add skcrypt to every string
-* [] Maybe put
-*/
-
 int main(int argc, char** argv) {
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
 	if (isDebPresent()) {
