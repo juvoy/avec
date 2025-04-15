@@ -51,6 +51,8 @@ int main(int argc, char** argv) {
 
 				Sleep(500);
 				std::filesystem::rename(executable, "avec.exe");
+
+				MessageBoxA(nullptr, "Finished patching...", "avec", MB_OK | MB_ICONINFORMATION);
 				return 0;
 			}
 		}
