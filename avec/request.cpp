@@ -46,7 +46,7 @@ std::string Request::Get()
 
     CHAR buffer[4096];
     DWORD bytesRead;
-    hInternet = inet_import::InternetOpenA("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    hInternet = inet_import::InternetOpenA(skCrypt("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0"), INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet) {
         return "";
     }
@@ -74,9 +74,9 @@ std::string Request::Get()
 
 std::string Request::Post()
 {
-    hInternet = inet_import::InternetOpenA("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    hInternet = inet_import::InternetOpenA(skCrypt("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0"), INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet) {
-        std::cerr << "InternetOpen failed: " << GetLastError() << std::endl;
+        std::cerr << skCrypt("InternetOpen failed: ") << GetLastError() << std::endl;
         return "";
     }
 
@@ -95,7 +95,7 @@ std::string Request::Post()
 
 
     if (!inet_import::InternetCrackUrlA(web_address.c_str(), 0, 0, &urlComp)) {
-        std::cerr << "InternetCrackUrl failed: " << GetLastError() << std::endl;
+        std::cerr << skCrypt("InternetCrackUrl failed: ") << GetLastError() << std::endl;
         InternetCloseHandle(hInternet);
         return "";
     }
@@ -103,15 +103,15 @@ std::string Request::Post()
     HINTERNET hSession = inet_import::InternetConnectA(hInternet, urlComp.lpszHostName, urlComp.nPort, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
 
     if (!hSession) {
-        std::cerr << "InternetConnect failed: " << GetLastError() << std::endl;
+        std::cerr << skCrypt("InternetConnect failed: ") << GetLastError() << std::endl;
         InternetCloseHandle(hInternet);
         return "";
     }
 
     LPCSTR acceptTypes[] = { "*/*", NULL };
-    HINTERNET hRequest = inet_import::HttpOpenRequestA(hSession, "POST", urlComp.lpszUrlPath, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
+    HINTERNET hRequest = inet_import::HttpOpenRequestA(hSession, skCrypt("POST"), urlComp.lpszUrlPath, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
     if (!hRequest) {
-        std::cerr << "HttpOpenRequest failed: " << GetLastError() << std::endl;
+        std::cerr << skCrypt("HttpOpenRequest failed: ") << GetLastError() << std::endl;
         InternetCloseHandle(hSession);
         InternetCloseHandle(hInternet);
         return "";
@@ -121,7 +121,7 @@ std::string Request::Post()
     LPCSTR postData = this->body.c_str();
 
     if (!HttpSendRequestA(hRequest, headers.c_str(), (DWORD)headers.length(), (LPVOID)postData, static_cast<DWORD>(this->body.size()))) {
-        std::cerr << "HttpSendRequest failed: " << GetLastError() << std::endl;
+        std::cerr << skCrypt("HttpSendRequest failed: ") << GetLastError() << std::endl;
         InternetCloseHandle(hRequest);
         InternetCloseHandle(hSession);
         InternetCloseHandle(hInternet);
