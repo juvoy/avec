@@ -23,12 +23,12 @@ Request::Request(std::string web_address, std::map<std::string, std::string> hea
 Request::Request(std::string web_address, std::map<std::string, std::string> headers, std::string body) : Request(web_address, headers)
 {
     this->body = body;
+    inet_import::init();
 }
 
 
 Request::Request(std::string web, std::string h) : Request(web, h, "")
 {
-
 }
 
 Request::Request(std::string web_address, std::string headers, std::string body)
@@ -36,6 +36,8 @@ Request::Request(std::string web_address, std::string headers, std::string body)
     this->web_address = web_address;
     this->headers = headers;
     this->body = body;
+
+    inet_import::init();
 }
 
 std::string Request::Get()
@@ -44,7 +46,7 @@ std::string Request::Get()
 
     CHAR buffer[4096];
     DWORD bytesRead;
-    hInternet = InternetOpenA("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    hInternet = inet_import::InternetOpenA("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet) {
         return "";
     }
@@ -72,22 +74,20 @@ std::string Request::Get()
 
 std::string Request::Post()
 {
-    hInternet = InternetOpenA("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    hInternet = inet_import::InternetOpenA("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet) {
         std::cerr << "InternetOpen failed: " << GetLastError() << std::endl;
         return "";
     }
 
-    // Convert URL to wide string
-    std::wstring web_address(this->web_address.begin(), this->web_address.end());
 
     // Open HTTP session
-    URL_COMPONENTSW urlComp;
+    URL_COMPONENTSA urlComp;
     ZeroMemory(&urlComp, sizeof(urlComp));
-    urlComp.dwStructSize = sizeof(URL_COMPONENTSW);
+    urlComp.dwStructSize = sizeof(URL_COMPONENTSA);
 
-    wchar_t hostName[256] = { 0 };
-    wchar_t urlPath[1024] = { 0 };
+    char hostName[256] = { 0 };
+    char urlPath[1024] = { 0 };
 
     urlComp.lpszHostName = hostName;
     urlComp.dwHostNameLength = sizeof(hostName) / sizeof(wchar_t);
@@ -95,13 +95,13 @@ std::string Request::Post()
     urlComp.dwUrlPathLength = sizeof(urlPath) / sizeof(wchar_t);
 
 
-    if (!InternetCrackUrlW(web_address.c_str(), 0, 0, &urlComp)) {
+    if (!inet_import::InternetCrackUrlA(web_address.c_str(), 0, 0, &urlComp)) {
         std::cerr << "InternetCrackUrl failed: " << GetLastError() << std::endl;
         InternetCloseHandle(hInternet);
         return "";
     }
 
-    HINTERNET hSession = InternetConnectW(hInternet, urlComp.lpszHostName, urlComp.nPort, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
+    HINTERNET hSession = inet_import::InternetConnectA(hInternet, urlComp.lpszHostName, urlComp.nPort, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
 
     if (!hSession) {
         std::cerr << "InternetConnect failed: " << GetLastError() << std::endl;
@@ -109,8 +109,8 @@ std::string Request::Post()
         return "";
     }
 
-    LPCWSTR acceptTypes[] = { L"*/*", NULL };
-    HINTERNET hRequest = HttpOpenRequestW(hSession, L"POST", urlComp.lpszUrlPath, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
+    LPCSTR acceptTypes[] = { "*/*", NULL };
+    HINTERNET hRequest = inet_import::HttpOpenRequestA(hSession, "POST", urlComp.lpszUrlPath, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
     if (!hRequest) {
         std::cerr << "HttpOpenRequest failed: " << GetLastError() << std::endl;
         InternetCloseHandle(hSession);
@@ -118,10 +118,10 @@ std::string Request::Post()
         return "";
     }
 
-    std::wstring headers(this->headers.begin(), this->headers.end());
+
     LPCSTR postData = this->body.c_str();
 
-    if (!HttpSendRequestW(hRequest, headers.c_str(), (DWORD)headers.length(), (LPVOID)postData, static_cast<DWORD>(this->body.size()))) {
+    if (!HttpSendRequestA(hRequest, headers.c_str(), (DWORD)headers.length(), (LPVOID)postData, static_cast<DWORD>(this->body.size()))) {
         std::cerr << "HttpSendRequest failed: " << GetLastError() << std::endl;
         InternetCloseHandle(hRequest);
         InternetCloseHandle(hSession);
@@ -147,4 +147,17 @@ std::string Request::Post()
     InternetCloseHandle(hInternet);
 
     return ret;
+}
+
+void inet_import::init()
+{
+    HMODULE hInet = GetModuleHandleA(skCrypt("Wininet.dll"));
+
+    InternetOpenA = (CustomInternetOpenA)GetProcAddress(hInet, "InternetOpenA");
+    InternetCrackUrlA = (CustomInternetCrackUrlA)GetProcAddress(hInet, "InternetCrackUrlA");
+    InternetConnectA = (CustomInternetConnectA)GetProcAddress(hInet, "InternetConnectA");
+    HttpOpenRequestA = (CustomHttpOpenRequestA)GetProcAddress(hInet, "HttpOpenRequestA");
+    HttpSendRequestA = (CustomHttpSendRequestA)GetProcAddress(hInet, "HttpSendRequestA");
+
+
 }

