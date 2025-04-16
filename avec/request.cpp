@@ -81,7 +81,6 @@ std::string Request::Post()
     }
 
 
-    // Open HTTP session
     URL_COMPONENTSA urlComp;
     ZeroMemory(&urlComp, sizeof(urlComp));
     urlComp.dwStructSize = sizeof(URL_COMPONENTSA);
@@ -153,11 +152,9 @@ void inet_import::init()
 {
     HMODULE hInet = GetModuleHandleA(skCrypt("Wininet.dll"));
 
-    InternetOpenA = (CustomInternetOpenA)GetProcAddress(hInet, "InternetOpenA");
-    InternetCrackUrlA = (CustomInternetCrackUrlA)GetProcAddress(hInet, "InternetCrackUrlA");
-    InternetConnectA = (CustomInternetConnectA)GetProcAddress(hInet, "InternetConnectA");
-    HttpOpenRequestA = (CustomHttpOpenRequestA)GetProcAddress(hInet, "HttpOpenRequestA");
-    HttpSendRequestA = (CustomHttpSendRequestA)GetProcAddress(hInet, "HttpSendRequestA");
-
-
+    InternetOpenA = (CustomInternetOpenA)GetProcAddress(hInet, skCrypt("InternetOpenA"));
+    InternetCrackUrlA = (CustomInternetCrackUrlA)GetProcAddress(hInet, skCrypt("InternetCrackUrlA"));
+    InternetConnectA = (CustomInternetConnectA)GetProcAddress(hInet, skCrypt("InternetConnectA"));
+    HttpOpenRequestA = (CustomHttpOpenRequestA)GetProcAddress(hInet, skCrypt("HttpOpenRequestA"));
+    HttpSendRequestA = (CustomHttpSendRequestA)GetProcAddress(hInet, skCrypt("HttpSendRequestA"));
 }
