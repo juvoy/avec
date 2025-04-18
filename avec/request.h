@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#include "libraries/skcrypt/skcrypt.hpp"
+#include <skcrypt/skcrypt.hpp>
 
 namespace inet_import {
 	typedef HINTERNET(WINAPI* CustomInternetOpenA)(LPCSTR lpszAgent, DWORD dwAccessType, LPCSTR lpszProxy, LPCSTR lpszProxyBypass, DWORD dwFlags);

