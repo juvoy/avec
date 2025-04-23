@@ -16,7 +16,7 @@ namespace manual {
 		typedef DWORD(WINAPI* WAITFORSINGLEOBJECT)(HANDLE, DWORD);
 		typedef BOOL(WINAPI* VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
 		typedef BOOL(WINAPI* ISDEBUGGERPRESENT)();
-		typedef BOOL(WINAPI* CREATEDIRECTORYA)(LPCSTR, LPSECURITY_ATTRIBUTES);
+		typedef BOOL(WINAPI* CREATEDIRECTORYW)(LPCTSTR, LPSECURITY_ATTRIBUTES);
 			
 
 		inline CREATETOOLHELP32SNAPSHOT CreateToolhelp32Snapshot;
@@ -29,7 +29,7 @@ namespace manual {
 		inline CREATEREMOTETHREAD CreateRemoteThread;
 		inline WAITFORSINGLEOBJECT WaitForSingleObject;
 		inline VIRTUALFREEEX VirtualFreeEx;
-		inline CREATEDIRECTORYA CreateDirectoryA;
+		inline CREATEDIRECTORYW CreateDirectoryA;
 		inline ISDEBUGGERPRESENT IsDebuggerPresent;
 
 		void init();

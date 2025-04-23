@@ -18,6 +18,6 @@ void manual::kernel32::init()
 	WaitForSingleObject = (WAITFORSINGLEOBJECT)GetProcAddress(hKernel, skCrypt("WaitForSingleObject"));
 	VirtualFreeEx = (VIRTUALFREEEX)GetProcAddress(hKernel, skCrypt("VirtualFreeEx"));
 
-	CreateDirectoryA = (CREATEDIRECTORYA)GetProcAddress(hKernel, skCrypt("CreateDirectoryA"));
+	CreateDirectoryA = (CREATEDIRECTORYA)GetProcAddress(hKernel, skCrypt("CreateDirectoryW"));
 	IsDebuggerPresent = (ISDEBUGGERPRESENT)GetProcAddress(hKernel, skCrypt("IsDebuggerPresent"));
 }

