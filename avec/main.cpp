@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 
 	manual::kernel32::init();
 
-	SHGETKNOWNFOLDERPATH ShGetKnownFolderPath = (SHGETKNOWNFOLDERPATH)GetProcAddress(GetModuleHandleA(skCrypt("Shell32.dll")), "SHGetKnownFolderPath");
+	SHGETKNOWNFOLDERPATH ShGetKnownFolderPath = (SHGETKNOWNFOLDERPATH)GetProcAddress(GetModuleHandleA(skCrypt("Shell32.dll")), skCrypt("SHGetKnownFolderPath"));
 
 	PWSTR szAppdata;
 	ShGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, szAppdata);
