@@ -34,4 +34,8 @@ namespace manual {
 
 		void init();
 	}
+
+	namespace shell32 {
+
+	}
 }

@@ -20,7 +20,7 @@ typedef void* (WINAPI* pMapViewOfFile)(HANDLE, DWORD, DWORD, DWORD, SIZE_T);
 typedef HRESULT(WINAPI* SHGETKNOWNFOLDERPATH)(REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR);
 
 int main(int argc, char** argv) {
-	ShowWindowCustom ShowWindow = (ShowWindowCustom)GetProcAddress(GetModuleHandleA("user32.dll"), skCrypt("ShowWindow"));
+	ShowWindowCustom ShowWindow = (ShowWindowCustom)GetProcAddress(GetModuleHandleA(skCrypt("user32.dll")), skCrypt("ShowWindow"));
 	ShowWindow(GetConsoleWindow(), SW_SHOW);
 
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
