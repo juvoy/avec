@@ -1,0 +1,50 @@
+#pragma once
+#include <windows.h>
+#include <shlobj.h>
+#include <tlhelp32.h>
+#include <skcrypt/skcrypt.hpp>
+
+namespace manual {
+
+	namespace kernel32 {
+		typedef HANDLE(WINAPI* CREATETOOLHELP32SNAPSHOT)(DWORD, DWORD);
+		typedef BOOL(WINAPI* PROCESS32FIRST)(HANDLE, LPPROCESSENTRY32);
+		typedef BOOL(WINAPI* PROCESS32NEXT)(HANDLE, LPPROCESSENTRY32);
+		typedef HANDLE(WINAPI* OPENPROCESS)(DWORD, BOOL, DWORD);
+		typedef void* (WINAPI* VIRTUALALLOCEX)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD);
+		typedef BOOL(WINAPI* WRITEPROCESSMEMORY)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*);
+		typedef BOOL(WINAPI* CLOSEHANDLE)(HANDLE);
+		typedef HANDLE(WINAPI* CREATEREMOTETHREAD)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
+		typedef DWORD(WINAPI* WAITFORSINGLEOBJECT)(HANDLE, DWORD);
+		typedef BOOL(WINAPI* VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
+		typedef BOOL(WINAPI* ISDEBUGGERPRESENT)();
+		typedef BOOL(WINAPI* CREATEDIRECTORY)(LPCTSTR, LPSECURITY_ATTRIBUTES);
+
+
+		inline CREATETOOLHELP32SNAPSHOT CreateToolhelp32Snapshot;
+		inline PROCESS32FIRST Process32FirstA;
+		inline PROCESS32NEXT Process32NextA;
+		inline OPENPROCESS OpenProcess;
+		inline VIRTUALALLOCEX VirtualAllocEx;
+		inline WRITEPROCESSMEMORY WriteProcessMemory;
+		inline CLOSEHANDLE CloseHandle;
+		inline CREATEREMOTETHREAD CreateRemoteThread;
+		inline WAITFORSINGLEOBJECT WaitForSingleObject;
+		inline VIRTUALFREEEX VirtualFreeEx;
+		inline CREATEDIRECTORY CreateDirectoryW;
+		inline ISDEBUGGERPRESENT IsDebuggerPresent;
+
+		template <class T>
+		T ManualImport(T);
+
+		void init();
+	}
+
+	namespace shell32 {
+		typedef HRESULT(WINAPI* SHGETKNOWNFOLDERPATH)(REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR*);
+
+		inline SHGETKNOWNFOLDERPATH SHGetKnownFolderPath;
+
+		void init();
+	}
+}
