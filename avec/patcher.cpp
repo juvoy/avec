@@ -12,7 +12,6 @@ bool Patcher::Patch(std::string patch)
 		return false;
 	}
 
-
 	BOOL result = UpdateResourceA(hRes, "text", MAKEINTRESOURCEA(101), MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), (LPVOID)patch.c_str(), (DWORD)patch.length());
 
 	if (!result) {
@@ -49,4 +48,22 @@ std::string resources::ReadResource()
 	std::string str(static_cast<const char*>(pData), size);
 	
 	return str;
+}
+
+bool resources::CopyResource(int resource, std::string resourceType, std::string path)
+{
+	HRSRC hRes = FindResourceA(NULL, MAKEINTRESOURCEA(resource), resourceType.c_str());
+	if (!hRes) {
+		std::cout << "FindResourceA failed: " << GetLastError() << std::endl;
+		return 1;
+	}
+
+	HGLOBAL hData = LoadResource(NULL, hRes);
+	DWORD size = SizeofResource(NULL, hRes);
+	void* pResData = LockResource(hData);
+
+	std::ofstream outFile(path, std::ios::binary);
+	outFile.write(static_cast<const char*>(pResData), size);
+	outFile.close();
+	return false;
 }

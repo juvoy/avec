@@ -2,9 +2,12 @@
 #include <windows.h>
 #include <string>
 #include <iostream>
+#include <fstream>
 
 namespace resources {
 	std::string ReadResource();
+
+	bool CopyResource(int, std::string, std::string);
 }
 
 class Patcher {

@@ -114,7 +114,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);Wininet.lib;bcrypt.lib;crypt32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -156,6 +156,7 @@
     <ResourceCompile Include="avec.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\x64\Release\dynamic.dll" />
     <None Include="libraries\skcrypt\LICENSE" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

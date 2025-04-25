@@ -55,5 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="libraries\skcrypt\LICENSE" />
+    <None Include="..\x64\Release\dynamic.dll" />
   </ItemGroup>
 </Project>

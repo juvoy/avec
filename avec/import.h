@@ -1,9 +1,11 @@
 #pragma once
 #include <windows.h>
+#include <shlobj.h>
 #include <tlhelp32.h>
 #include <skcrypt/skcrypt.hpp>
 
 namespace manual {
+
 	namespace kernel32 {
 		typedef HANDLE(WINAPI* CREATETOOLHELP32SNAPSHOT)(DWORD, DWORD);
 		typedef BOOL(WINAPI* PROCESS32FIRST)(HANDLE, LPPROCESSENTRY32);
@@ -16,8 +18,8 @@ namespace manual {
 		typedef DWORD(WINAPI* WAITFORSINGLEOBJECT)(HANDLE, DWORD);
 		typedef BOOL(WINAPI* VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
 		typedef BOOL(WINAPI* ISDEBUGGERPRESENT)();
-		typedef BOOL(WINAPI* CREATEDIRECTORYW)(LPCTSTR, LPSECURITY_ATTRIBUTES);
-			
+		typedef BOOL(WINAPI* CREATEDIRECTORY)(LPCTSTR, LPSECURITY_ATTRIBUTES);
+
 
 		inline CREATETOOLHELP32SNAPSHOT CreateToolhelp32Snapshot;
 		inline PROCESS32FIRST Process32FirstA;
@@ -29,13 +31,20 @@ namespace manual {
 		inline CREATEREMOTETHREAD CreateRemoteThread;
 		inline WAITFORSINGLEOBJECT WaitForSingleObject;
 		inline VIRTUALFREEEX VirtualFreeEx;
-		inline CREATEDIRECTORYW CreateDirectoryA;
+		inline CREATEDIRECTORY CreateDirectoryW;
 		inline ISDEBUGGERPRESENT IsDebuggerPresent;
+
+		template <class T>
+		T ManualImport(T);
 
 		void init();
 	}
 
 	namespace shell32 {
+		typedef HRESULT(WINAPI* SHGETKNOWNFOLDERPATH)(REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR*);
 
+		inline SHGETKNOWNFOLDERPATH SHGetKnownFolderPath;
+
+		void init();
 	}
 }

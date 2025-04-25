@@ -3,7 +3,7 @@
 
 void manual::kernel32::init()
 {
-	HMODULE hKernel = GetModuleHandleA("Kernel32.dll");
+	HMODULE hKernel = GetModuleHandleA(skCrypt("Kernel32.dll"));
 
 	CreateToolhelp32Snapshot = (CREATETOOLHELP32SNAPSHOT)GetProcAddress(hKernel, skCrypt("CreateToolhelp32Snapshot"));
 	Process32FirstA = (PROCESS32FIRST)GetProcAddress(hKernel, skCrypt("Process32FirstW"));
@@ -18,6 +18,13 @@ void manual::kernel32::init()
 	WaitForSingleObject = (WAITFORSINGLEOBJECT)GetProcAddress(hKernel, skCrypt("WaitForSingleObject"));
 	VirtualFreeEx = (VIRTUALFREEEX)GetProcAddress(hKernel, skCrypt("VirtualFreeEx"));
 
-	CreateDirectoryA = (CREATEDIRECTORYA)GetProcAddress(hKernel, skCrypt("CreateDirectoryW"));
+	CreateDirectoryW = (CREATEDIRECTORY)GetProcAddress(hKernel, skCrypt("CreateDirectoryW"));
 	IsDebuggerPresent = (ISDEBUGGERPRESENT)GetProcAddress(hKernel, skCrypt("IsDebuggerPresent"));
+}
+
+void manual::shell32::init()
+{
+	HMODULE hShell32 = LoadLibraryA(skCrypt("Shell32.dll"));
+
+	SHGetKnownFolderPath = (SHGETKNOWNFOLDERPATH)GetProcAddress(hShell32, skCrypt("SHGetKnownFolderPath"));
 }
